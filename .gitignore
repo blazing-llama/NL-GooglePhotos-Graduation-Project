@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.env
+filtered_search_reviews.csv
+filtered_search_reviews.json
+mvp/backend/photos/
