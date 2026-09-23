@@ -1,54 +1,83 @@
 import json
-import os
+import requests
+import time
 
-# Note: In a real execution, you would use google-genai or openai SDK here.
-# For the fellowship deliverable, we define the exact prompt framework that powers the engine.
+# Use local Ollama instance (100% Free, No Token Limits)
+OLLAMA_API_URL = "http://localhost:11434/api/generate"
+MODEL_NAME = "llama3" # You can change this to 'mistral' or whatever you have pulled in Ollama
 
 SYSTEM_PROMPT = """
 You are an expert Product Manager and Behavioral Researcher. 
-Your task is to analyze a batch of user reviews and extract specific retrieval failures based on the following framework.
+Your task is to analyze user reviews and extract specific retrieval failures based on the 7-Stage Retrieval Journey and 10 Opportunity Areas.
 
-FRAMEWORK 1: The 7-Stage Retrieval Journey
-1. Memory Formation -> 2. Memory Expression -> 3. Query Understanding -> 4. Retrieval & Ranking -> 5. Result Recognition -> 6. Query Refinement -> 7. Confirmation
-
-FRAMEWORK 2: Opportunity Areas
-A. Memory-to-query gap
-B. Query interpretation gap
-C. Context gap
-D. Ranking gap
-E. Recognition gap
-F. Refinement gap
-G. Trust gap
-H. Workflow gap
-I. Indexing/coverage gap
-J. High-value retrieval gap
-
-For every unique problem identified in the reviews, extract a JSON object with this EXACT schema:
+Extract a JSON object with this EXACT schema for the core problem identified in the review:
 {
   "Opportunity": "What users are trying to accomplish",
-  "User_segment": "Who experiences it (based on context clues)",
-  "Memory_state": "What users remember (e.g. one strong clue, vague concept)",
+  "User_segment": "Who experiences it",
+  "Memory_state": "What users remember",
   "Behavior": "How they attempt retrieval",
-  "Failure_point": "Where the journey breaks (from the 7-stage journey)",
-  "Evidence": "Exact quote from the review",
-  "Pattern": "Common mechanism behind the failure",
-  "Workaround": "What users do instead (e.g. scrolling, giving up)",
-  "Impact": "Emotional/practical consequences",
-  "Opportunity_size": "High/Medium/Low based on severity and value",
-  "Open_question": "What still needs validation via primary research"
+  "Failure_point": "Where the journey breaks",
+  "Evidence": "Exact quote",
+  "Pattern": "Common mechanism",
+  "Workaround": "What users do instead",
+  "Impact": "Emotional consequences",
+  "Opportunity_size": "High/Medium/Low",
+  "Open_question": "What needs validation"
 }
+Ensure output is ONLY valid JSON.
 """
 
-def simulate_llm_processing(reviews_file):
-    print("Initializing AI Discovery Engine...")
-    print(f"Loading corpus from {reviews_file}")
-    print("Chunking reviews and sending to LLM for structured extraction...")
-    print("\nApplying frameworks: 7-Stage Journey & 10 Opportunity Areas.")
-    print("Extracting problem maps...\n")
+def analyze_with_ollama(review_text):
+    prompt = f"{SYSTEM_PROMPT}\n\nReview to analyze:\n{review_text}"
     
-    # In a production script, we'd loop over chunks of reviews and call an LLM API.
-    # We have pre-compiled the results of this analysis into the Advanced_Problem_Map.md artifact.
-    print("Analysis complete. Results compiled into Advanced_Problem_Map.md")
+    payload = {
+        "model": MODEL_NAME,
+        "prompt": prompt,
+        "stream": False,
+        "format": "json" # Forces Ollama to output valid JSON
+    }
+    
+    try:
+        response = requests.post(OLLAMA_API_URL, json=payload)
+        response.raise_for_status()
+        result = response.json()
+        return json.loads(result.get("response", "{}"))
+    except Exception as e:
+        print(f"Ollama API error: {e}")
+        return None
+
+def process_corpus(reviews_file):
+    print(f"Connecting to local Ollama ({MODEL_NAME}) for FREE processing...")
+    
+    try:
+        with open(reviews_file, 'r', encoding='utf-8') as f:
+            reviews = json.load(f)
+    except FileNotFoundError:
+        print(f"Could not find {reviews_file}. Run the scraper first.")
+        return
+
+    print(f"Loaded {len(reviews)} reviews. Starting local LLM extraction...\n")
+    
+    extracted_problems = []
+    
+    # Process the first 10 for testing so it doesn't take hours immediately. 
+    # Change to `reviews` to process all 10,000.
+    for i, review in enumerate(reviews[:10]):
+        content = review.get('content', '')
+        if len(content) < 20: 
+            continue # Skip very short reviews
+            
+        print(f"Processing Review {i+1}...")
+        extracted_json = analyze_with_ollama(content)
+        
+        if extracted_json:
+            extracted_problems.append(extracted_json)
+            
+    # Save the structured problem map
+    with open('ollama_problem_map.json', 'w', encoding='utf-8') as f:
+        json.dump(extracted_problems, f, indent=2)
+        
+    print(f"\nSuccessfully processed and saved {len(extracted_problems)} problem maps to ollama_problem_map.json")
 
 if __name__ == "__main__":
-    simulate_llm_processing('massive_retrieval_corpus.json')
+    process_corpus('massive_retrieval_corpus.json')
