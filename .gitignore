@@ -7,3 +7,4 @@ filtered_search_reviews.json
 mvp/backend/photos/
 mvp/backend/server.log
 mvp/backend/embeddings_cache.npz
+mvp/backend/tags_cache.json

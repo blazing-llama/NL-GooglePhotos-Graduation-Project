@@ -63,7 +63,32 @@
             people: "Who's with you",
             object: "What's in it",
             category: "Category",
+            tags: "Related tags",
         };
+
+        const EXAMPLE_QUERIES = [
+            "that rainy beach trip with friends",
+            "sunny day with family",
+            "a hotel room with a view",
+            "coffee or hot chocolate somewhere cozy",
+            "walking my dog at sunset",
+            "a mountain hike",
+            "food I ate recently",
+            "a screenshot I saved",
+            "somewhere with a pool",
+            "a crowded city street",
+            "a quiet empty space",
+            "a portrait of someone",
+        ];
+
+        function shuffled(arr, n) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy.slice(0, n);
+        }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -78,6 +103,15 @@
             const [loading, setLoading] = useState(false);
             const [error, setError] = useState(null);
             const [listening, setListening] = useState(false);
+            const [examples, setExamples] = useState(() => shuffled(EXAMPLE_QUERIES, 3));
+
+            React.useEffect(() => {
+                if (asked) return;
+                const interval = setInterval(() => {
+                    setExamples(shuffled(EXAMPLE_QUERIES, 3));
+                }, 4000);
+                return () => clearInterval(interval);
+            }, [asked]);
 
             const applyResponse = (data) => {
                 setFilters(data.filters);
@@ -223,10 +257,30 @@
                             <div className="mt-8 text-center text-gray-500 px-6">
                                 <span className="material-symbols-outlined text-4xl mb-4 opacity-50">photo_library</span>
                                 <p className="text-lg font-medium text-gray-800">Ask Photos Co-Pilot</p>
-                                <p className="text-sm mt-2">
+                                <p className="text-sm mt-2 mb-6">
                                     Describe a vague memory. If it matches more than one thing, we'll show tappable
                                     clarifying chips instead of a wall of results -- no typing back and forth.
                                 </p>
+                                <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">Try asking</p>
+                                <div className="flex flex-wrap justify-center gap-2">
+                                    {examples.map((ex) => (
+                                        <span
+                                            key={ex}
+                                            className="chip"
+                                            onClick={() => { setQuery(ex); runSearch(ex); }}
+                                        >
+                                            {ex}
+                                        </span>
+                                    ))}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setExamples(shuffled(EXAMPLE_QUERIES, 3))}
+                                    className="mt-4 text-xs text-blue-600 flex items-center gap-1 mx-auto"
+                                >
+                                    <span className="material-symbols-outlined text-sm">refresh</span>
+                                    Shuffle examples
+                                </button>
                             </div>
                         )}
 

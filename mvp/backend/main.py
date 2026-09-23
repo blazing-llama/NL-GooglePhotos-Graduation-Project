@@ -29,6 +29,24 @@ SEMANTIC_TOP_K = 40
 DONE_THRESHOLD = 8
 DISPLAY_LIMIT = 24
 
+# Clarifying chips are generated only from the top slice of the ranked pool
+# (the photos that are *actually* strong matches), not the whole 40-wide
+# semantic pool -- otherwise chips barely change between queries, since a
+# small catalog means most of it survives into any top-40.
+SUGGESTION_POOL_SIZE = 10
+
+# A photo whose normalized+boosted score falls below this is considered "not
+# actually about what was asked" and dropped, rather than padding out
+# results (and clarifying chips) with barely-related photos just because the
+# catalog is small. Keeping RELEVANCE_FLOOR_MIN_RESULTS guarantees the user
+# still sees *something* even for a query that matches nothing well.
+RELEVANCE_FLOOR = -0.2
+RELEVANCE_FLOOR_MIN_RESULTS = 6
+
+# An exact keyword/tag hit is worth more than embedding-similarity noise --
+# this is what makes "Goa" reliably surface Goa-tagged photos on top.
+KEYWORD_MATCH_BOOST = 2.0
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -49,16 +67,49 @@ def _matches_filters(photo, filters):
     return True
 
 
+def _flatten_facet_values(facets):
+    values = []
+    for val in facets.values():
+        if isinstance(val, list):
+            values.extend(v for v in val if v)
+        elif val:
+            values.append(val)
+    return values
+
+
+def _keyword_boost(query, photo):
+    """
+    +KEYWORD_MATCH_BOOST for every facet/tag value (e.g. "Goa", "rainy",
+    "hot chocolate") that literally appears in the query. This is a
+    deterministic, explainable signal layered on top of the fuzzier
+    embedding score -- so typing an exact place or object name is
+    guaranteed to matter, not just nudge the ranking.
+    """
+    query_lower = query.lower()
+    boost = 0.0
+    for value in _flatten_facet_values(photo.get("facets", {})):
+        if str(value).lower() in query_lower:
+            boost += KEYWORD_MATCH_BOOST
+    return boost
+
+
 def _ranked_photos(query):
     """
-    Ranks the whole catalog against the query, correcting for CLIP's
-    text-vs-image "modality gap" (text queries sit structurally closer to
-    other text embeddings than to real image embeddings, so raw cosine
-    similarity would always rank mock/text-description photos above real
-    dataset photos regardless of actual relevance). Normalizing scores to a
-    z-score within each source group makes "how good a match is this,
-    relative to how well its own modality usually matches" comparable
-    across sources, so real photos can compete fairly with mock ones.
+    Ranks the whole catalog against the query. Three layers:
+
+    1. Raw CLIP cosine similarity (semantic closeness).
+    2. Per-source z-score normalization, correcting for CLIP's text-vs-image
+       "modality gap" (text queries sit structurally closer to other text
+       embeddings than to real image embeddings, so raw cosine similarity
+       would always rank mock/text-description photos above real dataset
+       photos regardless of actual relevance).
+    3. A keyword/tag exact-match boost, so a literal place or object name in
+       the query reliably outranks embedding noise.
+
+    Anything that still scores below RELEVANCE_FLOOR is dropped rather than
+    padded into the results just because the catalog is small -- that's what
+    was making every search show the same handful of location chips
+    regardless of relevance.
     """
     scores = image_index.raw_scores(query)
 
@@ -72,13 +123,20 @@ def _ranked_photos(query):
         stdev = statistics.pstdev(values) or 1.0
         stats[source] = (mean, stdev)
 
-    normalized = {}
+    combined = {}
     for photo in ALL_PHOTOS:
         mean, stdev = stats[photo["source"]]
-        normalized[photo["id"]] = (scores[photo["id"]] - mean) / stdev
+        z = (scores[photo["id"]] - mean) / stdev
+        combined[photo["id"]] = z + _keyword_boost(query, photo)
 
-    ranked_ids = sorted(normalized, key=normalized.get, reverse=True)[:SEMANTIC_TOP_K]
-    return [PHOTOS_BY_ID[pid] for pid in ranked_ids], {pid: scores[pid] for pid in ranked_ids}
+    ranked_ids = sorted(combined, key=combined.get, reverse=True)
+
+    above_floor = [pid for pid in ranked_ids if combined[pid] >= RELEVANCE_FLOOR]
+    if len(above_floor) < RELEVANCE_FLOOR_MIN_RESULTS:
+        above_floor = ranked_ids[:RELEVANCE_FLOOR_MIN_RESULTS]
+
+    kept = above_floor[:SEMANTIC_TOP_K]
+    return [PHOTOS_BY_ID[pid] for pid in kept], {pid: scores[pid] for pid in kept}
 
 
 def _suggest_facets(pool, filters):
@@ -121,7 +179,7 @@ def _public_photo(photo, score=None):
 
 def _respond(pool, filters, scores=None):
     filtered = [p for p in pool if _matches_filters(p, filters)]
-    suggestions = _suggest_facets(filtered, filters)
+    suggestions = _suggest_facets(filtered[:SUGGESTION_POOL_SIZE], filters)
     done = len(filtered) <= DONE_THRESHOLD or not suggestions
     results = filtered[:DISPLAY_LIMIT]
     return {
