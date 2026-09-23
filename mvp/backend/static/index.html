@@ -3,19 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Photos - Visual Pruning</title>
-    <!-- Tailwind CSS for rapid styling -->
+    <title>Google Photos - Ask Co-Pilot</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <style>
         body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
-        /* MD3 Search Bar */
         .md3-search {
             border-radius: 28px;
             background: #edf2fc;
@@ -25,18 +20,33 @@
             background: #ffffff;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
-        /* MD3 Card */
         .md3-card {
             border-radius: 16px;
             overflow: hidden;
             background: #fff;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
         }
-        .md3-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .chip {
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 13px;
+            border: 1px solid #dadce0;
+            background: #fff;
+            color: #3c4043;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+        .chip:hover { background: #f1f3f4; }
+        .chip-active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-color: #1a73e8;
+        }
+        .chip-clear {
+            background: #fce8e6;
+            color: #c5221f;
+            border-color: #c5221f;
         }
     </style>
 </head>
@@ -44,93 +54,116 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
+
+        const FACET_LABEL = {
+            location: "Location",
+            setting: "Setting",
+            weather: "Weather",
+            people: "Who's with you",
+            object: "What's in it",
+        };
+
+        const EMPTY_FILTERS = { location: null, setting: null, weather: null, people: null, object: null };
 
         function App() {
             const [query, setQuery] = useState("");
-            const [stage, setStage] = useState("HOME"); // HOME, PRUNING, RESULTS
-            const [activeIndices, setActiveIndices] = useState([]);
-            const [pruneData, setPruneData] = useState(null);
-            const [finalPaths, setFinalPaths] = useState([]);
+            const [asked, setAsked] = useState(false);
+            const [filters, setFilters] = useState(EMPTY_FILTERS);
+            const [results, setResults] = useState([]);
+            const [suggestions, setSuggestions] = useState({});
+            const [count, setCount] = useState(0);
+            const [done, setDone] = useState(false);
             const [loading, setLoading] = useState(false);
             const [error, setError] = useState(null);
 
-            const handleSearch = async (e) => {
+            const applyResponse = (data) => {
+                setFilters(data.filters);
+                setResults(data.results);
+                setSuggestions(data.suggestions);
+                setCount(data.count);
+                setDone(data.done);
+            };
+
+            const handleAsk = async (e) => {
                 e.preventDefault();
                 if (!query.trim()) return;
                 setLoading(true);
                 setError(null);
-                
                 try {
-                    const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
-                    const data = await res.json();
-                    
-                    if (data.error) {
-                        setError(data.error);
-                        setLoading(false);
-                        return;
-                    }
-                    
-                    setActiveIndices(data.indices);
-                    fetchClusters(data.indices);
-                } catch (err) {
-                    setError("Search failed.");
-                    setLoading(false);
-                }
-            };
-
-            const fetchClusters = async (indices) => {
-                try {
-                    const res = await fetch("/api/cluster", {
+                    const res = await fetch("/api/ask", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ indices })
+                        body: JSON.stringify({ query }),
                     });
                     const data = await res.json();
-                    
-                    if (data.done) {
-                        setFinalPaths(data.final_paths);
-                        setStage("RESULTS");
-                    } else {
-                        setPruneData(data);
-                        setStage("PRUNING");
-                    }
+                    applyResponse(data);
+                    setAsked(true);
                 } catch (err) {
-                    setError("Clustering failed.");
+                    setError("Search failed.");
                 } finally {
                     setLoading(false);
                 }
             };
 
-            const handlePruneSelect = (selectedIndices) => {
+            const refine = async (nextFilters) => {
                 setLoading(true);
-                setActiveIndices(selectedIndices);
-                fetchClusters(selectedIndices);
+                try {
+                    const res = await fetch("/api/refine", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ filters: nextFilters }),
+                    });
+                    const data = await res.json();
+                    applyResponse(data);
+                } catch (err) {
+                    setError("Refine failed.");
+                } finally {
+                    setLoading(false);
+                }
             };
+
+            const tapChip = (key, value) => {
+                const isActive = filters[key] === value;
+                const next = { ...filters, [key]: isActive ? null : value };
+                refine(next);
+            };
+
+            const reset = () => {
+                setQuery("");
+                setAsked(false);
+                setFilters(EMPTY_FILTERS);
+                setResults([]);
+                setSuggestions({});
+                setCount(0);
+                setDone(false);
+                setError(null);
+            };
+
+            const activeFilterEntries = Object.entries(filters).filter(([, v]) => v);
 
             return (
                 <div className="max-w-md mx-auto min-h-screen bg-white relative pb-20 shadow-xl">
-                    {/* App Bar */}
                     <div className="flex items-center p-4 sticky top-0 bg-white/90 backdrop-blur z-10">
-                        {stage !== "HOME" && (
-                            <button onClick={() => setStage("HOME")} className="mr-3 p-2 rounded-full hover:bg-gray-100">
+                        {asked && (
+                            <button onClick={reset} className="mr-3 p-2 rounded-full hover:bg-gray-100">
                                 <span className="material-symbols-outlined">arrow_back</span>
                             </button>
                         )}
-                        <h1 className="text-xl font-medium text-gray-800 flex-1">Google Photos</h1>
+                        <h1 className="text-xl font-medium text-gray-800 flex-1">
+                            Google Photos <span className="text-blue-600 font-bold">Ask</span>
+                        </h1>
                         <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">A</div>
                     </div>
 
-                    {/* Main Content */}
                     <div className="px-4 py-2">
-                        {/* Search Bar */}
-                        <form onSubmit={handleSearch} className="mb-6">
+                        <form onSubmit={handleAsk} className="mb-4">
                             <div className="md3-search flex items-center px-4 py-3">
                                 <span className="material-symbols-outlined text-gray-500 mr-3">search</span>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     className="bg-transparent flex-1 outline-none text-gray-700"
-                                    placeholder="Search your photos..."
+                                    placeholder="Ask Photos... e.g. that rainy beach trip with friends"
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                 />
@@ -150,51 +183,78 @@
                             </div>
                         )}
 
-                        {!loading && stage === "HOME" && (
+                        {!loading && !asked && (
                             <div className="mt-8 text-center text-gray-500 px-6">
                                 <span className="material-symbols-outlined text-4xl mb-4 opacity-50">photo_library</span>
-                                <p className="text-lg font-medium text-gray-800">Visual Pruning Demo</p>
-                                <p className="text-sm mt-2">Try a vague search like "beach" or "document". Instead of chronological scrolling, we'll ask you to visually narrow it down.</p>
+                                <p className="text-lg font-medium text-gray-800">Ask Photos Co-Pilot</p>
+                                <p className="text-sm mt-2">
+                                    Describe a vague memory. If it matches more than one thing, we'll show tappable
+                                    clarifying chips instead of a wall of results -- no typing back and forth.
+                                </p>
                             </div>
                         )}
 
-                        {!loading && stage === "PRUNING" && pruneData && (
-                            <div className="mt-2 text-center animate-fade-in">
-                                <p className="text-sm text-gray-500 font-medium mb-4 uppercase tracking-wider">Which is closer to your memory?</p>
-                                
-                                <div className="flex flex-col gap-4">
-                                    <div 
-                                        className="md3-card relative aspect-video"
-                                        onClick={() => handlePruneSelect(pruneData.option_a.cluster_indices)}
-                                    >
-                                        <img src={`/photos/${pruneData.option_a.path}`} className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/10 hover:bg-black/0 transition-colors"></div>
+                        {!loading && asked && (
+                            <div>
+                                {activeFilterEntries.length > 0 && (
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {activeFilterEntries.map(([key, value]) => (
+                                            <span
+                                                key={key}
+                                                className="chip chip-active flex items-center gap-1"
+                                                onClick={() => tapChip(key, value)}
+                                            >
+                                                {value}
+                                                <span className="material-symbols-outlined text-sm">close</span>
+                                            </span>
+                                        ))}
                                     </div>
-                                    
-                                    <div className="text-gray-400 font-medium text-sm my-1">OR</div>
-                                    
-                                    <div 
-                                        className="md3-card relative aspect-video"
-                                        onClick={() => handlePruneSelect(pruneData.option_b.cluster_indices)}
-                                    >
-                                        <img src={`/photos/${pruneData.option_b.path}`} className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/10 hover:bg-black/0 transition-colors"></div>
-                                    </div>
-                                </div>
-                                <p className="text-xs text-gray-400 mt-6">{activeIndices.length} photos remaining</p>
-                            </div>
-                        )}
+                                )}
 
-                        {!loading && stage === "RESULTS" && (
-                            <div className="mt-4">
-                                <h2 className="text-lg font-medium text-gray-800 mb-4 px-2">Is this what you're looking for?</h2>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {finalPaths.map((path, idx) => (
-                                        <div key={idx} className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                                            <img src={`/photos/${path}`} className="w-full h-full object-cover" />
-                                        </div>
-                                    ))}
-                                </div>
+                                {!done && Object.keys(suggestions).length > 0 && (
+                                    <div className="mb-6">
+                                        <p className="text-sm text-gray-500 font-medium mb-3 uppercase tracking-wider">
+                                            💡 Refine your memory
+                                        </p>
+                                        {Object.entries(suggestions).map(([key, options]) => (
+                                            <div key={key} className="mb-3">
+                                                <p className="text-xs text-gray-400 mb-1.5">{FACET_LABEL[key] || key}</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {options.map((opt) => (
+                                                        <span
+                                                            key={opt}
+                                                            className="chip"
+                                                            onClick={() => tapChip(key, opt)}
+                                                        >
+                                                            {opt}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <p className="text-sm text-gray-500 mb-3 px-1">
+                                    {count} {count === 1 ? "match" : "matches"}
+                                </p>
+
+                                {results.length > 0 ? (
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {results.map((photo) => (
+                                            <div key={photo.id} className="md3-card aspect-square">
+                                                <img src={photo.url} className="w-full h-full object-cover" />
+                                                <div className="p-2 text-xs text-gray-500">
+                                                    📍 {photo.location} • {photo.weather}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center text-gray-400 text-sm mt-8">
+                                        No matches. Try clearing a filter above.
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
