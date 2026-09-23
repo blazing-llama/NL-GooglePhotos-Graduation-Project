@@ -62,20 +62,22 @@
             weather: "Weather",
             people: "Who's with you",
             object: "What's in it",
+            category: "Category",
         };
 
-        const EMPTY_FILTERS = { location: null, setting: null, weather: null, people: null, object: null };
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
         function App() {
             const [query, setQuery] = useState("");
             const [asked, setAsked] = useState(false);
-            const [filters, setFilters] = useState(EMPTY_FILTERS);
+            const [filters, setFilters] = useState({});
             const [results, setResults] = useState([]);
             const [suggestions, setSuggestions] = useState({});
             const [count, setCount] = useState(0);
             const [done, setDone] = useState(false);
             const [loading, setLoading] = useState(false);
             const [error, setError] = useState(null);
+            const [listening, setListening] = useState(false);
 
             const applyResponse = (data) => {
                 setFilters(data.filters);
@@ -85,16 +87,14 @@
                 setDone(data.done);
             };
 
-            const handleAsk = async (e) => {
-                e.preventDefault();
-                if (!query.trim()) return;
+            const runSearch = async (searchQuery) => {
                 setLoading(true);
                 setError(null);
                 try {
                     const res = await fetch("/api/ask", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ query }),
+                        body: JSON.stringify({ query: searchQuery }),
                     });
                     const data = await res.json();
                     applyResponse(data);
@@ -106,13 +106,19 @@
                 }
             };
 
+            const handleAsk = (e) => {
+                e.preventDefault();
+                if (!query.trim()) return;
+                runSearch(query);
+            };
+
             const refine = async (nextFilters) => {
                 setLoading(true);
                 try {
                     const res = await fetch("/api/refine", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ filters: nextFilters }),
+                        body: JSON.stringify({ query, filters: nextFilters }),
                     });
                     const data = await res.json();
                     applyResponse(data);
@@ -132,12 +138,34 @@
             const reset = () => {
                 setQuery("");
                 setAsked(false);
-                setFilters(EMPTY_FILTERS);
+                setFilters({});
                 setResults([]);
                 setSuggestions({});
                 setCount(0);
                 setDone(false);
                 setError(null);
+            };
+
+            const startListening = () => {
+                if (!SpeechRecognition) {
+                    setError("Voice search isn't supported in this browser. Try Chrome or Edge.");
+                    return;
+                }
+                const recognition = new SpeechRecognition();
+                recognition.lang = "en-US";
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => setListening(true);
+                recognition.onerror = () => setListening(false);
+                recognition.onend = () => setListening(false);
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    setQuery(transcript);
+                    runSearch(transcript);
+                };
+
+                recognition.start();
             };
 
             const activeFilterEntries = Object.entries(filters).filter(([, v]) => v);
@@ -172,6 +200,14 @@
                                         <span className="material-symbols-outlined">close</span>
                                     </button>
                                 )}
+                                <button
+                                    type="button"
+                                    onClick={startListening}
+                                    className={`ml-2 p-1 rounded-full ${listening ? "text-red-500 animate-pulse" : "text-gray-500 hover:text-blue-600"}`}
+                                    title="Search by voice"
+                                >
+                                    <span className="material-symbols-outlined">mic</span>
+                                </button>
                             </div>
                         </form>
 
@@ -241,14 +277,19 @@
 
                                 {results.length > 0 ? (
                                     <div className="grid grid-cols-2 gap-2">
-                                        {results.map((photo) => (
-                                            <div key={photo.id} className="md3-card aspect-square">
-                                                <img src={photo.url} className="w-full h-full object-cover" />
-                                                <div className="p-2 text-xs text-gray-500">
-                                                    📍 {photo.location} • {photo.weather}
+                                        {results.map((photo) => {
+                                            const tags = Object.values(photo.facets || {})
+                                                .flat()
+                                                .filter(Boolean);
+                                            return (
+                                                <div key={photo.id} className="md3-card aspect-square">
+                                                    <img src={photo.url} className="w-full h-full object-cover" />
+                                                    <div className="p-2 text-xs text-gray-500 truncate">
+                                                        {tags.length > 0 ? tags.join(" • ") : photo.source}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 ) : (
                                     <div className="text-center text-gray-400 text-sm mt-8">
