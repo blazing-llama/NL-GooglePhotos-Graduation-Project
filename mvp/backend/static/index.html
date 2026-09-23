@@ -8,77 +8,229 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap" rel="stylesheet" />
     <style>
-        body { font-family: 'Roboto', sans-serif; background-color: #f8f9fa; }
-        .md3-search {
-            border-radius: 28px;
-            background: #edf2fc;
-            transition: all 0.2s ease;
+        /* ---- Material 3 token set (light default, dark override) ---- */
+        :root {
+            --surface: #f8f9fa;
+            --surface-dim: #d9dadb;
+            --surface-bright: #f8f9fa;
+            --surface-container-lowest: #ffffff;
+            --surface-container-low: #f3f4f5;
+            --surface-container: #edeeef;
+            --surface-container-high: #e7e8e9;
+            --surface-container-highest: #e1e3e4;
+            --on-surface: #191c1d;
+            --on-surface-variant: #414754;
+            --outline: #727785;
+            --outline-variant: #c1c6d6;
+            --primary: #005bbf;
+            --on-primary: #ffffff;
+            --primary-container: #1a73e8;
+            --tertiary: #006d2c;
+            --tertiary-container: #008939;
+            --secondary: #b51b15;
+            --shadow-color: 0, 0, 0;
         }
-        .md3-search:focus-within {
-            background: #ffffff;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        :root[data-theme="dark"] {
+            --surface: #101314;
+            --surface-dim: #101314;
+            --surface-bright: #36393a;
+            --surface-container-lowest: #0b0e0f;
+            --surface-container-low: #191c1d;
+            --surface-container: #1d2021;
+            --surface-container-high: #282b2c;
+            --surface-container-highest: #323536;
+            --on-surface: #e1e3e4;
+            --on-surface-variant: #c1c6d6;
+            --outline: #8b9198;
+            --outline-variant: #414754;
+            --primary: #adc7ff;
+            --on-primary: #002e69;
+            --primary-container: #1a73e8;
+            --tertiary: #6ddd81;
+            --tertiary-container: #008939;
+            --secondary: #ffb4a9;
+            --shadow-color: 0, 0, 0;
         }
-        .md3-card {
-            border-radius: 16px;
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --surface: #101314; --surface-dim: #101314; --surface-bright: #36393a;
+                --surface-container-lowest: #0b0e0f; --surface-container-low: #191c1d;
+                --surface-container: #1d2021; --surface-container-high: #282b2c;
+                --surface-container-highest: #323536; --on-surface: #e1e3e4;
+                --on-surface-variant: #c1c6d6; --outline: #8b9198; --outline-variant: #414754;
+                --primary: #adc7ff; --on-primary: #002e69; --primary-container: #1a73e8;
+                --tertiary: #6ddd81; --tertiary-container: #008939; --secondary: #ffb4a9;
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--surface);
+            color: var(--on-surface);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0; vertical-align: middle; }
+        .icon-fill { font-variation-settings: 'FILL' 1; }
+
+        .glass-card {
+            position: relative;
+            border-radius: 1.5rem;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--primary-container) 20%, transparent), color-mix(in srgb, var(--tertiary-container) 14%, transparent));
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 24px rgba(var(--shadow-color), 0.08);
             overflow: hidden;
-            background: #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
+        .glass-card::before, .glass-card::after {
+            content: ""; position: absolute; width: 140px; height: 140px; border-radius: 999px;
+            filter: blur(50px); pointer-events: none; z-index: 0;
+        }
+        .glass-card::before { background: color-mix(in srgb, var(--primary) 30%, transparent); top: -50px; right: -40px; }
+        .glass-card::after { background: color-mix(in srgb, var(--tertiary) 25%, transparent); bottom: -50px; left: -40px; }
+
+        .search-pill {
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--surface-container-lowest) 85%, transparent);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 1px 3px rgba(var(--shadow-color), 0.12);
+        }
+
         .chip {
-            border-radius: 20px;
+            border-radius: 999px;
             padding: 8px 16px;
             font-size: 13px;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
+            font-weight: 500;
+            border: 1px solid var(--outline-variant);
+            background: var(--surface-container-low);
+            color: var(--on-surface);
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .chip:hover { background: #f1f3f4; }
+        .chip:hover { background: var(--surface-container-high); }
         .chip-active {
-            background: #e8f0fe;
-            color: #1a73e8;
-            border-color: #1a73e8;
+            background: var(--primary);
+            color: var(--on-primary);
+            border-color: var(--primary);
         }
-        .chip-clear {
-            background: #fce8e6;
-            color: #c5221f;
-            border-color: #c5221f;
+
+        .photo-card {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: var(--surface-container);
+            box-shadow: 0 1px 3px rgba(var(--shadow-color), 0.1);
         }
+        .photo-card img { transition: transform 0.4s ease; }
+        .photo-card:hover img { transform: scale(1.06); }
+        .photo-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.75), transparent 55%);
+            opacity: 0; transition: opacity 0.2s ease;
+            display: flex; align-items: flex-end; padding: 8px;
+        }
+        .photo-card:hover .photo-overlay { opacity: 1; }
+
+        /* ---- Uiverse "Generate" button by dexter-st, adapted (.ap-btn) ---- */
+        .ap-btn-wrapper { position: relative; display: inline-block; width: 100%; }
+        .ap-btn {
+            --border-radius: 999px; --padding: 4px; --transition: 0.4s;
+            --button-color: var(--primary); --highlight-hue: 217deg;
+            width: 100%; user-select: none; display: flex; align-items: center; justify-content: center;
+            padding: 0.85em 1.4em; font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 600;
+            background-color: var(--button-color); color: var(--on-primary);
+            box-shadow:
+                inset 0px 1px 1px rgba(255,255,255,0.25), inset 0px 2px 2px rgba(255,255,255,0.15),
+                0px -2px 4px rgba(0,0,0,0.08), 0px -6px 10px rgba(0,0,0,0.08);
+            border: solid 1px color-mix(in srgb, var(--on-primary) 25%, transparent);
+            border-radius: var(--border-radius); cursor: pointer;
+            transition: box-shadow var(--transition), border var(--transition), background-color var(--transition), transform 0.15s ease;
+        }
+        .ap-btn:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--on-primary) 55%, transparent); }
+        .ap-btn:active { transform: translateY(0); }
+        .ap-btn .material-symbols-outlined { margin-right: 8px; animation: ap-flicker 2s linear infinite; }
+        @keyframes ap-flicker { 50% { opacity: 0.5; } }
+        .ap-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* ---- Uiverse rotating-word loader by kennyotsu, adapted (.ap-loader) ---- */
+        .ap-loader-card {
+            background: var(--surface-container-lowest);
+            border-radius: 1.25rem;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 1px 3px rgba(var(--shadow-color), 0.1);
+        }
+        .ap-loader {
+            color: var(--on-surface-variant);
+            font-family: 'Inter', sans-serif; font-weight: 500; font-size: 18px;
+            box-sizing: content-box; height: 28px; display: flex; align-items: center; justify-content: center;
+        }
+        .ap-words { overflow: hidden; position: relative; height: 28px; }
+        .ap-words::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(var(--surface-container-lowest) 10%, transparent 35%, transparent 65%, var(--surface-container-lowest) 90%);
+            z-index: 2;
+        }
+        .ap-word {
+            display: block; height: 28px; line-height: 28px; padding-left: 6px;
+            color: var(--primary); font-weight: 600;
+            animation: ap-spin 5s infinite;
+        }
+        @keyframes ap-spin {
+            8%  { transform: translateY(-102%); } 20% { transform: translateY(-100%); }
+            28% { transform: translateY(-202%); } 40% { transform: translateY(-200%); }
+            48% { transform: translateY(-302%); } 60% { transform: translateY(-300%); }
+            68% { transform: translateY(-402%); } 80% { transform: translateY(-400%); }
+            88% { transform: translateY(-502%); } 100% { transform: translateY(-500%); }
+        }
+
+        .theme-toggle {
+            width: 44px; height: 28px; border-radius: 999px; position: relative;
+            background: var(--surface-container-high); border: 1px solid var(--outline-variant);
+            cursor: pointer; transition: background 0.2s ease;
+        }
+        .theme-toggle .knob {
+            position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 999px;
+            background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center;
+            transition: left 0.25s ease; font-size: 14px;
+        }
+        :root[data-theme="dark"] .theme-toggle .knob { left: 20px; }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect, useRef } = React;
 
         const FACET_LABEL = {
-            location: "Location",
-            setting: "Setting",
-            weather: "Weather",
-            people: "Who's with you",
-            object: "What's in it",
-            category: "Category",
+            location: "Location", setting: "Setting", weather: "Weather",
+            people: "Who's with you", object: "What's in it", category: "Category",
             tags: "Related tags",
         };
+        const FACET_ICON = {
+            location: "location_on", setting: "home_pin", weather: "partly_cloudy_day",
+            people: "group", object: "category", category: "style", tags: "sell",
+        };
 
-        const EXAMPLE_QUERIES = [
-            "that rainy beach trip with friends",
-            "sunny day with family",
-            "a hotel room with a view",
-            "coffee or hot chocolate somewhere cozy",
-            "walking my dog at sunset",
-            "a mountain hike",
-            "food I ate recently",
-            "a screenshot I saved",
-            "somewhere with a pool",
-            "a crowded city street",
-            "a quiet empty space",
-            "a portrait of someone",
+        const EXAMPLES = [
+            { text: "that rainy beach trip with friends", icon: "beach_access" },
+            { text: "sunny day with family", icon: "wb_sunny" },
+            { text: "a hotel room with a view", icon: "hotel" },
+            { text: "coffee somewhere cozy", icon: "local_cafe" },
+            { text: "walking my dog at sunset", icon: "pets" },
+            { text: "a mountain hike", icon: "hiking" },
+            { text: "food I ate recently", icon: "restaurant" },
+            { text: "a screenshot I saved", icon: "screenshot" },
+            { text: "somewhere with a pool", icon: "pool" },
+            { text: "a crowded city street", icon: "groups" },
+            { text: "a quiet empty space", icon: "self_improvement" },
+            { text: "a portrait of someone", icon: "portrait" },
         ];
 
         function shuffled(arr, n) {
@@ -92,7 +244,56 @@
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+        function useTheme() {
+            const [theme, setTheme] = useState(() => localStorage.getItem("ap-theme") || "auto");
+            useEffect(() => {
+                if (theme === "auto") {
+                    document.documentElement.removeAttribute("data-theme");
+                } else {
+                    document.documentElement.setAttribute("data-theme", theme);
+                }
+                localStorage.setItem("ap-theme", theme);
+            }, [theme]);
+            const isDark = theme === "dark" || (theme === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+            return [isDark, () => setTheme(isDark ? "light" : "dark")];
+        }
+
+        function AskButton({ onClick, loading, disabled }) {
+            return (
+                <div className="ap-btn-wrapper">
+                    <button type="submit" className="ap-btn" onClick={onClick} disabled={disabled}>
+                        <span className="material-symbols-outlined icon-fill text-[18px]">auto_awesome</span>
+                        <span>{loading ? "Asking..." : "Ask Photos"}</span>
+                    </button>
+                </div>
+            );
+        }
+
+        function LoadingWords({ words }) {
+            const list = words.length ? words.slice(0, 5) : ["your photos", "your photos", "your photos", "your photos", "your photos"];
+            while (list.length < 5) list.push(list[0]);
+            return (
+                <div className="ap-loader-card flex flex-col items-center gap-3">
+                    <div className="ap-loader">
+                        <span>Reading&nbsp;</span>
+                        <div className="ap-words">
+                            {list.map((w, i) => <span key={i} className="ap-word">{w}</span>)}
+                        </div>
+                    </div>
+                    <div className="flex gap-1.5">
+                        {[0,1,2].map(i => (
+                            <span key={i} className="w-1.5 h-1.5 rounded-full" style={{
+                                background: "var(--primary)",
+                                animation: `ap-flicker 1s ease-in-out ${i * 0.15}s infinite`
+                            }}></span>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
         function App() {
+            const [isDark, toggleTheme] = useTheme();
             const [query, setQuery] = useState("");
             const [asked, setAsked] = useState(false);
             const [filters, setFilters] = useState({});
@@ -103,15 +304,22 @@
             const [loading, setLoading] = useState(false);
             const [error, setError] = useState(null);
             const [listening, setListening] = useState(false);
-            const [examples, setExamples] = useState(() => shuffled(EXAMPLE_QUERIES, 3));
+            const [examples, setExamples] = useState(() => shuffled(EXAMPLES, 3));
+            const [loaderWords, setLoaderWords] = useState([]);
 
-            React.useEffect(() => {
+            useEffect(() => {
                 if (asked) return;
-                const interval = setInterval(() => {
-                    setExamples(shuffled(EXAMPLE_QUERIES, 3));
-                }, 4000);
+                const interval = setInterval(() => setExamples(shuffled(EXAMPLES, 3)), 4000);
                 return () => clearInterval(interval);
             }, [asked]);
+
+            useEffect(() => {
+                if (!loading) return;
+                fetch("/api/sample_names?count=8")
+                    .then(r => r.json())
+                    .then(d => setLoaderWords(d.names || []))
+                    .catch(() => {});
+            }, [loading]);
 
             const applyResponse = (data) => {
                 setFilters(data.filters);
@@ -170,14 +378,8 @@
             };
 
             const reset = () => {
-                setQuery("");
-                setAsked(false);
-                setFilters({});
-                setResults([]);
-                setSuggestions({});
-                setCount(0);
-                setDone(false);
-                setError(null);
+                setQuery(""); setAsked(false); setFilters({}); setResults([]);
+                setSuggestions({}); setCount(0); setDone(false); setError(null);
             };
 
             const startListening = () => {
@@ -188,8 +390,6 @@
                 const recognition = new SpeechRecognition();
                 recognition.lang = "en-US";
                 recognition.interimResults = false;
-                recognition.maxAlternatives = 1;
-
                 recognition.onstart = () => setListening(true);
                 recognition.onerror = () => setListening(false);
                 recognition.onend = () => setListening(false);
@@ -198,87 +398,99 @@
                     setQuery(transcript);
                     runSearch(transcript);
                 };
-
                 recognition.start();
             };
 
             const activeFilterEntries = Object.entries(filters).filter(([, v]) => v);
 
             return (
-                <div className="max-w-md mx-auto min-h-screen bg-white relative pb-20 shadow-xl">
-                    <div className="flex items-center p-4 sticky top-0 bg-white/90 backdrop-blur z-10">
+                <div className="max-w-md mx-auto min-h-screen relative pb-16" style={{ background: "var(--surface)" }}>
+                    <div className="flex items-center p-4 sticky top-0 z-10" style={{ background: "color-mix(in srgb, var(--surface) 90%, transparent)", backdropFilter: "blur(16px)" }}>
                         {asked && (
-                            <button onClick={reset} className="mr-3 p-2 rounded-full hover:bg-gray-100">
+                            <button onClick={reset} className="mr-2 p-2 rounded-full" style={{ color: "var(--on-surface)" }}>
                                 <span className="material-symbols-outlined">arrow_back</span>
                             </button>
                         )}
-                        <h1 className="text-xl font-medium text-gray-800 flex-1">
-                            Google Photos <span className="text-blue-600 font-bold">Ask</span>
+                        <span className="material-symbols-outlined mr-2" style={{ color: "var(--primary)", fontSize: 26 }}>photo_library</span>
+                        <h1 className="text-lg font-medium flex-1" style={{ color: "var(--on-surface)" }}>
+                            Google Photos <span style={{ color: "var(--primary)", fontWeight: 700 }}>Ask</span>
                         </h1>
-                        <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">A</div>
+                        <button className="theme-toggle" onClick={toggleTheme} title="Toggle dark mode">
+                            <span className="knob material-symbols-outlined" style={{ fontSize: 13 }}>
+                                {isDark ? "dark_mode" : "light_mode"}
+                            </span>
+                        </button>
                     </div>
 
                     <div className="px-4 py-2">
-                        <form onSubmit={handleAsk} className="mb-4">
-                            <div className="md3-search flex items-center px-4 py-3">
-                                <span className="material-symbols-outlined text-gray-500 mr-3">search</span>
-                                <input
-                                    type="text"
-                                    className="bg-transparent flex-1 outline-none text-gray-700"
-                                    placeholder="Ask Photos... e.g. that rainy beach trip with friends"
-                                    value={query}
-                                    onChange={(e) => setQuery(e.target.value)}
-                                />
-                                {query && (
-                                    <button type="button" onClick={() => setQuery("")} className="text-gray-500 ml-2">
-                                        <span className="material-symbols-outlined">close</span>
-                                    </button>
-                                )}
-                                <button
-                                    type="button"
-                                    onClick={startListening}
-                                    className={`ml-2 p-1 rounded-full ${listening ? "text-red-500 animate-pulse" : "text-gray-500 hover:text-blue-600"}`}
-                                    title="Search by voice"
-                                >
-                                    <span className="material-symbols-outlined">mic</span>
-                                </button>
+                        {!asked && (
+                            <div className="glass-card mb-6">
+                                <div className="relative z-10 flex flex-col gap-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="material-symbols-outlined icon-fill" style={{ color: "var(--primary)" }}>auto_awesome</span>
+                                            <span className="text-sm font-semibold" style={{ color: "var(--on-surface)" }}>Ask Photos with AI</span>
+                                        </div>
+                                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold" style={{ background: "color-mix(in srgb, var(--primary-container) 25%, transparent)", color: "var(--primary)" }}>CLIP + facets</span>
+                                    </div>
+                                    <form onSubmit={handleAsk} className="flex flex-col gap-3">
+                                        <div className="search-pill relative flex items-center px-4 py-3">
+                                            <span className="material-symbols-outlined mr-2" style={{ color: "var(--outline)" }}>search</span>
+                                            <input
+                                                type="text"
+                                                className="bg-transparent flex-1 outline-none text-sm"
+                                                style={{ color: "var(--on-surface)" }}
+                                                placeholder="e.g. that rainy beach trip with friends"
+                                                value={query}
+                                                onChange={(e) => setQuery(e.target.value)}
+                                            />
+                                            {query && (
+                                                <button type="button" onClick={() => setQuery("")} className="mr-1" style={{ color: "var(--outline)" }}>
+                                                    <span className="material-symbols-outlined text-[20px]">close</span>
+                                                </button>
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={startListening}
+                                                className="p-1 rounded-full"
+                                                style={{ color: listening ? "var(--secondary)" : "var(--outline)" }}
+                                                title="Search by voice"
+                                            >
+                                                <span className={"material-symbols-outlined" + (listening ? " icon-fill" : "")}>mic</span>
+                                            </button>
+                                        </div>
+                                        <AskButton loading={loading} disabled={loading || !query.trim()} />
+                                    </form>
+                                </div>
                             </div>
-                        </form>
+                        )}
 
-                        {error && <div className="text-red-500 mb-4 px-2">{error}</div>}
+                        {error && <div className="mb-4 px-2 text-sm" style={{ color: "var(--secondary)" }}>{error}</div>}
 
                         {loading && (
-                            <div className="flex justify-center mt-12">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            <div className="mt-6">
+                                <LoadingWords words={loaderWords} />
                             </div>
                         )}
 
                         {!loading && !asked && (
-                            <div className="mt-8 text-center text-gray-500 px-6">
-                                <span className="material-symbols-outlined text-4xl mb-4 opacity-50">photo_library</span>
-                                <p className="text-lg font-medium text-gray-800">Ask Photos Co-Pilot</p>
-                                <p className="text-sm mt-2 mb-6">
-                                    Describe a vague memory. If it matches more than one thing, we'll show tappable
-                                    clarifying chips instead of a wall of results -- no typing back and forth.
-                                </p>
-                                <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">Try asking</p>
+                            <div className="text-center px-2">
+                                <p className="text-xs uppercase tracking-wider mb-3" style={{ color: "var(--outline)" }}>Try asking</p>
                                 <div className="flex flex-wrap justify-center gap-2">
                                     {examples.map((ex) => (
-                                        <span
-                                            key={ex}
-                                            className="chip"
-                                            onClick={() => { setQuery(ex); runSearch(ex); }}
-                                        >
-                                            {ex}
+                                        <span key={ex.text} className="chip" onClick={() => { setQuery(ex.text); runSearch(ex.text); }}>
+                                            <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--primary)" }}>{ex.icon}</span>
+                                            {ex.text}
                                         </span>
                                     ))}
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() => setExamples(shuffled(EXAMPLE_QUERIES, 3))}
-                                    className="mt-4 text-xs text-blue-600 flex items-center gap-1 mx-auto"
+                                    onClick={() => setExamples(shuffled(EXAMPLES, 3))}
+                                    className="mt-4 text-xs flex items-center gap-1 mx-auto"
+                                    style={{ color: "var(--primary)" }}
                                 >
-                                    <span className="material-symbols-outlined text-sm">refresh</span>
+                                    <span className="material-symbols-outlined text-[16px]">refresh</span>
                                     Shuffle examples
                                 </button>
                             </div>
@@ -286,16 +498,22 @@
 
                         {!loading && asked && (
                             <div>
+                                <div className="flex items-center justify-between mb-3 px-1">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <span className="material-symbols-outlined icon-fill text-[18px]" style={{ color: "var(--primary)" }}>auto_awesome</span>
+                                        <span className="text-sm truncate" style={{ color: "var(--on-surface-variant)" }}>
+                                            Results for "<span style={{ color: "var(--on-surface)", fontWeight: 500 }}>{query}</span>"
+                                        </span>
+                                    </div>
+                                    <span className="text-xs font-semibold shrink-0" style={{ color: "var(--on-surface-variant)" }}>{count} found</span>
+                                </div>
+
                                 {activeFilterEntries.length > 0 && (
                                     <div className="flex flex-wrap gap-2 mb-4">
                                         {activeFilterEntries.map(([key, value]) => (
-                                            <span
-                                                key={key}
-                                                className="chip chip-active flex items-center gap-1"
-                                                onClick={() => tapChip(key, value)}
-                                            >
+                                            <span key={key} className="chip chip-active" onClick={() => tapChip(key, value)}>
                                                 {value}
-                                                <span className="material-symbols-outlined text-sm">close</span>
+                                                <span className="material-symbols-outlined text-[14px]">close</span>
                                             </span>
                                         ))}
                                     </div>
@@ -303,21 +521,19 @@
 
                                 {!done && Object.keys(suggestions).length > 0 && (
                                     <div className="mb-6">
-                                        <p className="text-sm text-gray-500 font-medium mb-3 uppercase tracking-wider">
-                                            💡 Refine your memory
+                                        <p className="text-xs font-medium mb-3 uppercase tracking-wider flex items-center gap-1.5" style={{ color: "var(--outline)" }}>
+                                            <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--tertiary)" }}>tips_and_updates</span>
+                                            Refine your memory
                                         </p>
                                         {Object.entries(suggestions).map(([key, options]) => (
                                             <div key={key} className="mb-3">
-                                                <p className="text-xs text-gray-400 mb-1.5">{FACET_LABEL[key] || key}</p>
+                                                <p className="text-xs mb-1.5 flex items-center gap-1" style={{ color: "var(--outline)" }}>
+                                                    <span className="material-symbols-outlined text-[14px]">{FACET_ICON[key] || "label"}</span>
+                                                    {FACET_LABEL[key] || key}
+                                                </p>
                                                 <div className="flex flex-wrap gap-2">
                                                     {options.map((opt) => (
-                                                        <span
-                                                            key={opt}
-                                                            className="chip"
-                                                            onClick={() => tapChip(key, opt)}
-                                                        >
-                                                            {opt}
-                                                        </span>
+                                                        <span key={opt} className="chip" onClick={() => tapChip(key, opt)}>{opt}</span>
                                                     ))}
                                                 </div>
                                             </div>
@@ -325,28 +541,24 @@
                                     </div>
                                 )}
 
-                                <p className="text-sm text-gray-500 mb-3 px-1">
-                                    {count} {count === 1 ? "match" : "matches"}
-                                </p>
-
                                 {results.length > 0 ? (
                                     <div className="grid grid-cols-2 gap-2">
                                         {results.map((photo) => {
-                                            const tags = Object.values(photo.facets || {})
-                                                .flat()
-                                                .filter(Boolean);
+                                            const tags = Object.values(photo.facets || {}).flat().filter(Boolean);
                                             return (
-                                                <div key={photo.id} className="md3-card aspect-square">
-                                                    <img src={photo.url} className="w-full h-full object-cover" />
-                                                    <div className="p-2 text-xs text-gray-500 truncate">
-                                                        {tags.length > 0 ? tags.join(" • ") : photo.source}
+                                                <div key={photo.id} className="photo-card aspect-square">
+                                                    <img src={photo.url} className="w-full h-full object-cover" loading="lazy" />
+                                                    <div className="photo-overlay">
+                                                        <span className="text-white text-[11px] leading-tight line-clamp-2">
+                                                            {tags.slice(0, 3).join(" • ") || photo.source}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                 ) : (
-                                    <div className="text-center text-gray-400 text-sm mt-8">
+                                    <div className="text-center text-sm mt-8" style={{ color: "var(--outline)" }}>
                                         No matches. Try clearing a filter above.
                                     </div>
                                 )}

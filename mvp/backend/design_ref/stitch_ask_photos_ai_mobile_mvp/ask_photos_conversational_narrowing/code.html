@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">  tailwind.config = {    darkMode: "class",    theme: {      extend: {        "colors": {          "surface-container-high": "#e7e8e9",          "on-primary-fixed": "#001a41",          "error-container": "#ffdad6",          "on-error": "#ffffff",          "surface-bright": "#f8f9fa",          "on-secondary-container": "#fffbff",          "surface-dim": "#d9dadb",          "surface-container-highest": "#e1e3e4",          "primary": "#005bbf",          "inverse-on-surface": "#f0f1f2",          "primary-container": "#1a73e8",          "tertiary-fixed": "#89fa9b",          "surface-tint": "#005bc0",          "tertiary-container": "#008939",          "secondary-container": "#d9372b",          "error": "#ba1a1a",          "on-tertiary-fixed-variant": "#005320",          "outline": "#727785",          "surface-container": "#edeeef",          "tertiary": "#006d2c",          "on-error-container": "#93000a",          "outline-variant": "#c1c6d6",          "primary-fixed-dim": "#adc7ff",          "on-primary-container": "#ffffff",          "surface": "#f8f9fa",          "inverse-primary": "#adc7ff",          "on-tertiary-container": "#ffffff",          "on-secondary-fixed-variant": "#930004",          "on-tertiary-fixed": "#002108",          "on-secondary": "#ffffff",          "surface-container-lowest": "#ffffff",          "on-tertiary": "#ffffff",          "surface-variant": "#e1e3e4",          "tertiary-fixed-dim": "#6ddd81",          "primary-fixed": "#d8e2ff",          "inverse-surface": "#2e3132",          "secondary": "#b51b15",          "background": "#f8f9fa",          "on-background": "#191c1d",          "on-secondary-fixed": "#410001",          "surface-container-low": "#f3f4f5",          "on-primary": "#ffffff",          "secondary-fixed-dim": "#ffb4a9",          "on-surface": "#191c1d",          "on-primary-fixed-variant": "#004493",          "secondary-fixed": "#ffdad5",          "on-surface-variant": "#414754"        },        "borderRadius": {          "DEFAULT": "0.25rem",          "lg": "0.5rem",          "xl": "0.75rem",          "full": "9999px"        },        "spacing": {          "space-xs": "0.25rem",          "space-lg": "1.5rem",          "gutter": "1rem",          "margin": "1.5rem",          "space-xl": "2rem",          "space-md": "1rem",          "space-sm": "0.5rem"        },        "fontFamily": {          "body-sm": ["Inter"],          "label-sm": ["Inter"],          "title-sm": ["Inter"],          "body-lg": ["Inter"],          "title-md": ["Inter"],          "label-lg": ["Inter"],          "headline-lg": ["Inter"],          "display-lg": ["Inter"],          "body-md": ["Inter"],          "display-sm": ["Inter"],          "label-md": ["Inter"],          "headline-sm": ["Inter"],          "display-md": ["Inter"],          "headline-md": ["Inter"],          "title-lg": ["Inter"]        }      }    }  }</script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-xl pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[28px]">photo_library</span><span class="font-title-lg font-bold text-on-surface tracking-tight">Google Photos</span></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-gutter pt-16 pb-24 bg-surface flex-1"><div class="flex flex-col w-full pb-12">
+<!-- Conversational Search Bar & AI Context Header -->
+<div class="flex flex-col gap-space-sm mb-space-md">
+<div class="flex items-center justify-between bg-surface-container-low p-space-md rounded-xl shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-label-md text-on-surface-variant">Ask Photos AI</span>
+<span class="text-title-md text-on-surface truncate">Showing results for "beach"</span>
+</div>
+</div>
+<button class="text-label-sm text-primary font-bold px-space-sm py-1 rounded-full bg-primary-container/10 hover:bg-primary-container/20 transition-all shrink-0" onclick="resetFilters()">Reset</button>
+</div>
+<!-- Dynamic Interactive Narrowing Chips -->
+<div class="flex gap-space-xs overflow-x-auto py-space-xs no-scrollbar scroll-smooth">
+<button class="filter-chip flex items-center gap-space-xs px-space-md py-2 rounded-full bg-surface-container-high text-on-surface-variant text-label-lg whitespace-nowrap transition-all shadow-sm hover:bg-surface-container-highest" onclick="toggleChip(this, 'boats')">
+<span class="material-symbols-outlined text-[16px]">sailing</span>
+<span>Boats?</span>
+</button>
+<button class="filter-chip flex items-center gap-space-xs px-space-md py-2 rounded-full bg-surface-container-high text-on-surface-variant text-label-lg whitespace-nowrap transition-all shadow-sm hover:bg-surface-container-highest" onclick="toggleChip(this, 'december')">
+<span class="material-symbols-outlined text-[16px]">ac_unit</span>
+<span>December?</span>
+</button>
+<button class="filter-chip flex items-center gap-space-xs px-space-md py-2 rounded-full bg-surface-container-high text-on-surface-variant text-label-lg whitespace-nowrap transition-all shadow-sm hover:bg-surface-container-highest" onclick="toggleChip(this, 'night')">
+<span class="material-symbols-outlined text-[16px]">nights_stay</span>
+<span>Night starry sky?</span>
+</button>
+<button class="filter-chip flex items-center gap-space-xs px-space-md py-2 rounded-full bg-surface-container-high text-on-surface-variant text-label-lg whitespace-nowrap transition-all shadow-sm hover:bg-surface-container-highest" onclick="toggleChip(this, 'crowded')">
+<span class="material-symbols-outlined text-[16px]">groups</span>
+<span>Crowded?</span>
+</button>
+</div>
+</div>
+<!-- Results Subheader -->
+<div class="flex items-center justify-between mb-space-sm px-space-xs">
+<span class="text-title-sm text-on-surface-variant" id="results-count">12 photos found</span>
+<span class="text-label-sm text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+      Instant AI match
+    </span>
+</div>
+<!-- Photo Grid -->
+<div class="grid grid-cols-2 gap-2" id="photo-grid">
+<!-- Photo Card 1 -->
+<div class="photo-card group relative aspect-square rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all duration-300" data-tags="boats december">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A sunny tropical beach in December with crystal clear turquoise water, white powdery sand, and several colorful wooden sailboats anchored near the shore under a bright blue sky with soft white clouds." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2HoxTSrApaOxB6iuKlYFBwjmKrJXM7azm5C2sa67n2kssHtu-aSC3sheLNtB77pz58dTb-RTQ8lfH0eI1H_rs8qtal_aoNR4YxFfiGO1QOmV13oWuTdX7YFJvwJthb4_dfvDtFJWh240z19_b_ypjemSyBjhyGZ3hmsf-mXGyMEBdme7pzy3enUfqrG_fNB3rrQAhpavzWrQ29R6TrjvbKflJAipbjaZvmbOZvu3MaLnFEXKgGQR-"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-space-sm">
+<span class="text-white text-label-sm font-medium">Dec 14, 2023</span>
+<span class="text-white/80 text-[10px]">Maui, Hawaii</span>
+</div>
+<div class="absolute top-2 right-2 w-7 h-7 rounded-full bg-surface/80 backdrop-blur-md flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+</div>
+</div>
+<!-- Photo Card 2 -->
+<div class="photo-card group relative aspect-square rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all duration-300" data-tags="night">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A serene nighttime beach scene illuminated by a breathtaking starry sky with the Milky Way visible in deep indigo and purple tones, gentle waves washing ashore reflecting starlight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVQ_kvieItbJu5Ft-wKMA6VADji1UF8piY94KcNGzM9-zSs3bJ8TAhvgk-8NsWH-rSIHyIsZwKMDHDTYAL83ahCH_WYGJUUU1q7bAoCjBVh4v3pTZYfNDdfa1d20k7EOuo7lZRQdNETL-mNejSbF2UTxcD_pCcE9U6wI7410yKEIppH7259fpbCsufNOmE5S4Zq91q3lKXTx20XQOt4lp0eM9k5XTUB4RJS9EN6uLiLbLiaqBY9s8V"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-space-sm">
+<span class="text-white text-label-sm font-medium">Aug 22, 2023</span>
+<span class="text-white/80 text-[10px]">Big Sur, California</span>
+</div>
+</div>
+<!-- Photo Card 3 -->
+<div class="photo-card group relative aspect-square rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all duration-300" data-tags="crowded decmber">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A lively crowded beach during the holiday season in December with colorful beach umbrellas, people walking along the shoreline, and warm golden hour sunlight casting soft shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAspgAGAVJPh9c13X4lafcIWz3BdK_iyTRqF9pQ94hbSrSMeBeSQDWCSGKNxVj-8IlAFBSX1wg-aPJUz1UKPctAsw1CvtjpJ7fGjsWvGl5ERh1N744iU5fYhnwzfGyim1j2DEBarbMvZ_weiuvxsbb_joC1WQOdWiCQdni_vNYxT_eSf-wlI0Ir104ofGwDqzf3wab8-WLl0AUTlk5sSE5tx7XDihinQwPPU3IK7EQTC-JQHjvl8WJI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-space-sm">
+<span class="text-white text-label-sm font-medium">Dec 31, 2022</span>
+<span class="text-white/80 text-[10px]">Bondi Beach, Sydney</span>
+</div>
+</div>
+<!-- Photo Card 4 -->
+<div class="photo-card group relative aspect-square rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all duration-300" data-tags="boats">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A wide panoramic shot of a quiet cove with dozens of small fishing boats bobbing peacefully on calm azure water surrounded by lush green coastal cliffs." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdsu-krN6Jvvs_6NhWHYHVVwrxlzQvhtfKORBIyMwApqNV-e0jiO_ImMz_v2WCLF56WcbBUlmc4wQ_IWaIesYEoGZkIo1p-ihCePCXEsrwhfMUALoiyuJnhB-HldGel2LoQqd1Zz0OWlM75ZLkDiZLGIheX412P-x5GYk_ESdYh7TwtkLBlluNHVJ2uN4bjLNfq6pN1w1I1-qUnZx-dp0gPf8gMayTXzSvvW7-ZWzdvBa6yO8EbR9L"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-space-sm">
+<span class="text-white text-label-sm font-medium">Jul 04, 2023</span>
+<span class="text-white/80 text-[10px]">Amalfi Coast, Italy</span>
+</div>
+</div>
+<!-- Photo Card 5 -->
+<div class="photo-card group relative aspect-square rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all duration-300" data-tags="night crowded">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A vibrant night beach party with warm string lights hanging between palm trees, silhouetted crowds enjoying music near the glowing campfire on the sand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEu_uAcG8JAi3eeUlaJxtiuKhW-0gxhAp_pIcHYCeKSSAgaL7bkaRN1IVTVTrxHxXW1SswQM4RsI2RPJep4E9U7qSC4gXSx6J0iX_Fjsva8ktag8iDPEAznqCDwKnl3r36Z7ZKvndvItRJeKf9xzcLgDIOIhxsMvJJTNSwx3juRPSI61CbFjaltNt6wSu86igdyTEKpsn7-6Au9AvFJtOLkHhcbIc7G9GuGZ3mwdii87nheTUt6iUV"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-space-sm">
+<span class="text-white text-label-sm font-medium">Jan 01, 2024</span>
+<span class="text-white/80 text-[10px]">Phuket, Thailand</span>
+</div>
+</div>
+<!-- Photo Card 6 -->
+<div class="photo-card group relative aspect-square rounded-xl overflow-hidden bg-surface-container shadow-sm transition-all duration-300" data-tags="december">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A crisp winter beach scene in December with frosty sand dunes, a dramatic gray ocean, and overcast moody lighting creating an atmospheric seascape." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSXr8168gulPUUqX1nRXV1pjaSJD9g9oQzuSOuO5z1C42jM_NMzVhQ8Or0ZVIHpKQKPiZ2g1xPUy0z-r82u736KjleCYlotLr0UyvOHW6MSpB-t0M5tXCh90KZaZOVaSITIshWywOFvG_Kd7ESlgiNbOPpgkkf75cReyv9QmKKTjaNEGKNfVpI_yfTMRlfgyB3sFOSY717m7edhTzVyOD9Hc6PywZOhdHaI7FdnvpemoBCX2aa-Qo6"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-space-sm">
+<span class="text-white text-label-sm font-medium">Dec 05, 2023</span>
+<span class="text-white/80 text-[10px]">Oregon Coast</span>
+</div>
+</div>
+</div>
+<!-- Empty state for filtering -->
+<div class="hidden flex flex-col items-center justify-center py-16 px-4 text-center" id="empty-state">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mb-space-md text-on-surface-variant">
+<span class="material-symbols-outlined text-[32px]">filter_alt_off</span>
+</div>
+<h3 class="text-title-md text-on-surface mb-space-xs">No exact matches found</h3>
+<p class="text-body-sm text-on-surface-variant max-w-xs mb-space-md">Try deselecting some filters to broaden your search results.</p>
+<button class="px-space-md py-2 rounded-full bg-primary text-on-primary text-label-lg font-medium shadow-sm" onclick="resetFilters()">Clear filters</button>
+</div>
+<script>
+    let activeFilters = new Set();
+
+    function toggleChip(button, filterKey) {
+      if (activeFilters.has(filterKey)) {
+        activeFilters.delete(filterKey);
+        button.classList.remove('bg-primary', 'text-on-primary');
+        button.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+      } else {
+        activeFilters.add(filterKey);
+        button.classList.remove('bg-surface-container-high', 'text-on-surface-variant');
+        button.classList.add('bg-primary', 'text-on-primary');
+      }
+      filterPhotos();
+    }
+
+    function resetFilters() {
+      activeFilters.clear();
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-on-primary');
+        btn.classList.add('bg-surface-container-high', 'text-on-surface-variant');
+      });
+      filterPhotos();
+    }
+
+    function filterPhotos() {
+      const cards = document.querySelectorAll('.photo-card');
+      const emptyState = document.getElementById('empty-state');
+      const resultsCount = document.getElementById('results-count');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const tags = card.getAttribute('data-tags').split(' ');
+        if (activeFilters.size === 0) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          const match = Array.from(activeFilters).every(filter => tags.includes(filter));
+          if (match) {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        }
+      });
+
+      resultsCount.textContent = `${visibleCount} photos found`;
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+  </script>
+</div></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary bg-primary-container/10 font-bold"><div class="flex justify-around items-center h-20 px-space-xs"><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="photos" href="#"><span class="material-symbols-outlined">photo</span><span class="text-label-sm">Photos</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="memories" href="#"><span class="material-symbols-outlined">auto_awesome</span><span class="text-label-sm">Memories</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 rounded-full transition-all text-primary bg-primary-container/10 font-bold" data-path="search-ask-photos" href="#"><span class="material-symbols-outlined">search</span><span class="text-label-sm">Search</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="sharing" href="#"><span class="material-symbols-outlined">group</span><span class="text-label-sm">Sharing</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="library" href="#"><span class="material-symbols-outlined">photo_album</span><span class="text-label-sm">Library</span></a></div></nav></body></html>

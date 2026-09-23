@@ -144,6 +144,12 @@ MOCK_PHOTOS = [
     },
 ]
 
+for _photo in MOCK_PHOTOS:
+    _loc = _photo["facets"].get("location", "memory")
+    _obj = _photo["facets"].get("object", "photo")
+    _slug = f"{_loc}_{_obj}".replace(" ", "_")
+    _photo["display_name"] = f"IMG_{_slug}.jpg"
+
 DATASET_DIR = os.path.join("photos", "dataset")
 
 CATEGORY_LABELS = {
@@ -166,7 +172,7 @@ def _load_dataset_photos():
         return photos
     for slug, label in CATEGORY_LABELS.items():
         folder = os.path.join(DATASET_DIR, slug)
-        for path in sorted(glob.glob(os.path.join(folder, "*.jpg"))):
+        for i, path in enumerate(sorted(glob.glob(os.path.join(folder, "*.jpg"))), start=1):
             filename = os.path.basename(path)
             photos.append({
                 "id": f"dataset_{slug}_{filename}",
@@ -175,6 +181,9 @@ def _load_dataset_photos():
                 "description": f"A real photo of {label.lower()}.",
                 "source": "dataset",
                 "facets": {"category": label},
+                # Human-friendly, ASCII-safe display name -- the real
+                # filenames contain Chinese characters, unsuitable for UI.
+                "display_name": f"IMG_{slug}_{i:02d}.jpg",
             })
     return photos
 

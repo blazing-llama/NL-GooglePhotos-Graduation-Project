@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
+import random
 import statistics
 
 from database import ALL_PHOTOS
@@ -197,6 +198,17 @@ def _respond(pool, filters, scores=None):
 async def serve_ui():
     with open("static/index.html", "r", encoding="utf-8") as f:
         return f.read()
+
+
+@app.get("/api/sample_names")
+async def sample_names(count: int = 8):
+    """
+    Real filenames from the catalog (not placeholder text), used by the
+    loading state so it visibly reads through actual photos it's indexing
+    rather than a generic spinner.
+    """
+    pool = [p.get("display_name", p["id"]) for p in ALL_PHOTOS]
+    return {"names": random.sample(pool, min(count, len(pool)))}
 
 
 @app.post("/api/ask")

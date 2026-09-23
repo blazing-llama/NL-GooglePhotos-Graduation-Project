@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">  tailwind.config = {    darkMode: "class",    theme: {      extend: {        "colors": {          "surface-container-high": "#e7e8e9",          "on-primary-fixed": "#001a41",          "error-container": "#ffdad6",          "on-error": "#ffffff",          "surface-bright": "#f8f9fa",          "on-secondary-container": "#fffbff",          "surface-dim": "#d9dadb",          "surface-container-highest": "#e1e3e4",          "primary": "#005bbf",          "inverse-on-surface": "#f0f1f2",          "primary-container": "#1a73e8",          "tertiary-fixed": "#89fa9b",          "surface-tint": "#005bc0",          "tertiary-container": "#008939",          "secondary-container": "#d9372b",          "error": "#ba1a1a",          "on-tertiary-fixed-variant": "#005320",          "outline": "#727785",          "surface-container": "#edeeef",          "tertiary": "#006d2c",          "on-error-container": "#93000a",          "outline-variant": "#c1c6d6",          "primary-fixed-dim": "#adc7ff",          "on-primary-container": "#ffffff",          "surface": "#f8f9fa",          "inverse-primary": "#adc7ff",          "on-tertiary-container": "#ffffff",          "on-secondary-fixed-variant": "#930004",          "on-tertiary-fixed": "#002108",          "on-secondary": "#ffffff",          "surface-container-lowest": "#ffffff",          "on-tertiary": "#ffffff",          "surface-variant": "#e1e3e4",          "tertiary-fixed-dim": "#6ddd81",          "primary-fixed": "#d8e2ff",          "inverse-surface": "#2e3132",          "secondary": "#b51b15",          "background": "#f8f9fa",          "on-background": "#191c1d",          "on-secondary-fixed": "#410001",          "surface-container-low": "#f3f4f5",          "on-primary": "#ffffff",          "secondary-fixed-dim": "#ffb4a9",          "on-surface": "#191c1d",          "on-primary-fixed-variant": "#004493",          "secondary-fixed": "#ffdad5",          "on-surface-variant": "#414754"        },        "borderRadius": {          "DEFAULT": "0.25rem",          "lg": "0.5rem",          "xl": "0.75rem",          "full": "9999px"        },        "spacing": {          "space-xs": "0.25rem",          "space-lg": "1.5rem",          "gutter": "1rem",          "margin": "1.5rem",          "space-xl": "2rem",          "space-md": "1rem",          "space-sm": "0.5rem"        },        "fontFamily": {          "body-sm": ["Inter"],          "label-sm": ["Inter"],          "title-sm": ["Inter"],          "body-lg": ["Inter"],          "title-md": ["Inter"],          "label-lg": ["Inter"],          "headline-lg": ["Inter"],          "display-lg": ["Inter"],          "body-md": ["Inter"],          "display-sm": ["Inter"],          "label-md": ["Inter"],          "headline-sm": ["Inter"],          "display-md": ["Inter"],          "headline-md": ["Inter"],          "title-lg": ["Inter"]        }      }    }  }</script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-xl pt-safe"><div class="h-16 px-gutter flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[28px]">photo_library</span><span class="font-title-lg font-bold text-on-surface tracking-tight">Google Photos</span></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-gutter pt-16 pb-24 bg-surface flex-1"><div class="flex flex-col w-full pb-8">
+<!-- Active Filter & Header Bar -->
+<div class="flex items-center justify-between mb-space-md pt-2">
+<div class="flex flex-col">
+<h1 class="font-headline-sm text-on-surface">Beach & Boats</h1>
+<p class="font-body-sm text-on-surface-variant">Showing 24 filtered items from your library</p>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Select mode" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined text-[20px]">checklist</span>
+</button>
+<button aria-label="Sort options" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface hover:bg-surface-container-highest transition-all">
+<span class="material-symbols-outlined text-[20px]">sort</span>
+</button>
+</div>
+</div>
+<!-- Active Chip & AI Summary Pill -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-space-sm no-scrollbar">
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-primary-container text-on-primary-container rounded-full text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+<span>Beach + Boats</span>
+<span class="material-symbols-outlined text-[16px] cursor-pointer opacity-80 hover:opacity-100">close</span>
+</div>
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-high text-on-surface rounded-full text-label-md">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Amalfi Coast</span>
+</div>
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-high text-on-surface rounded-full text-label-md">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span>Summer 2024</span>
+</div>
+</div>
+<!-- AI Delight Banner / Action Hub -->
+<div class="relative my-space-md p-space-md rounded-2xl bg-gradient-to-r from-primary-fixed/30 via-tertiary-fixed-dim/20 to-secondary-fixed/25 overflow-hidden shadow-sm">
+<div class="absolute -right-4 -bottom-4 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px] text-primary">sailing</span>
+</div>
+<div class="flex flex-col gap-space-sm relative z-10">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<span class="font-title-sm text-on-surface font-bold">AI Memory Curated</span>
+</div>
+<span class="text-label-sm px-2 py-0.5 rounded-full bg-surface/80 text-primary font-medium">New</span>
+</div>
+<p class="font-body-sm text-on-surface-variant">We've grouped your sun-drenched boat outings into a cinematic highlight reel ready to save or share.</p>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<button class="flex-1 py-2 px-space-md rounded-full bg-primary text-on-primary font-label-lg flex items-center justify-center gap-space-xs shadow-sm hover:opacity-95 transition-all">
+<span class="material-symbols-outlined text-[18px]">bookmark_add</span>
+<span>Save as Album</span>
+</button>
+<button class="py-2 px-space-md rounded-full bg-surface text-on-surface font-label-lg flex items-center justify-center gap-space-xs shadow-sm hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-[18px]">share</span>
+<span>Share</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Date Group: July 2024 -->
+<div class="mt-space-sm mb-space-xs">
+<h3 class="font-title-sm text-on-surface font-medium">July 2024 • Positano, Italy</h3>
+</div>
+<!-- Photo Grid -->
+<div class="grid grid-cols-3 gap-1 rounded-xl overflow-hidden">
+<!-- Item 1 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A cinematic medium shot of a traditional wooden sailboat anchored in crystal clear turquoise water off the Amalfi coast, with colorful cliffside villas glowing in the warm afternoon sun." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAKsvS3RfCTH0c_pIDU7ILVZjtDLoOOPz1yrHx-PYWZjBeODHng__2TMkmMgP5uFfSHMz0AWbziYC-S9n4gbBPTgppucEMzHLKXLryCdRR4fQf69AYwDUr9uLmcwTd3CFiTQbnfdy3XommPhkLiw3fjyUCzN7EYYHQa230xhQNWmN19hFl8G3nTxCsVSq-E61zril2HGMPNDDVEpXqUpoPYX_sVmlMnGzdrtuCqQk_ZYFZ3De-3qsKc')"></div>
+<div class="absolute bottom-1 right-1 bg-black/40 backdrop-blur-md rounded px-1 text-[10px] text-white">0:12</div>
+</div>
+<!-- Item 2 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="Close up action shot of a sleek white motorboat cutting through vibrant blue sea waves, leaving a trail of white foam under a brilliant summer sky." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBBHgyUdoUjp_vBb9l9ny_PFvhU2O8YdiF4ImnlknrVUpfy4rv5ONz6dTIdBAwY1xYtBEj4u7BDWJr5EycqUS46zBPsj8mTTGsf_zjgOy36glAL6T9rOKXsppQq-uPP9mpRYFXSeX2EvPN7x4uDQxhcjDkpz9fRjq7aT78nF6C6QInrnZJiH5fCYwIywOkMFTkIeUJnZU3Mw-4pc_Thkpa22sPFr_mhgpqEv5TkjCwZJ4iPe_58zU9L')"></div>
+<div class="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A wide panoramic view of a sandy Italian beach dotted with vibrant striped umbrellas, overlooking a calm bay filled with anchored sailing yachts and distant cliffs." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC09_gl905Caizwg3Tj-fuZLTASSDxDx_WrGBdhwqWfZQFyQN26JU8fTLTroVCnxLYcabn507sTbmTUobshRHARKSog9LfWqGgJmW7reuVVaJm2A8JOUzh3benxp3gxf9EBfwUqew4FOt3LSzmFVoMeX_N_XJ7g1d7SwlV4TeuJ9SpwfQIBe6f5MoS4dZvyywQ3T2ILcZLhWM09B4DzW95J7i8pV-6AK3UlgcThbWbMWulv9l-fdKjH')"></div>
+</div>
+<!-- Item 4 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="Golden hour shot of a luxury catamaran silhouette against a fiery orange sunset over the Mediterranean ocean, with gentle ripples on the water surface." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB5vn0mBknbmeSJmYGK-HL-lUO_ZUOH0kFuDFTMKgVfx6GWf0WrtPD3BfwYVr0qM-rW58WbPMpWgacELBWjeEwqUhqLzSsj89IRVHTg06hYUW8Hw005lUunr7LW5y5ZTsEspr1fqjsSv8SCV6FdX6MLQ_UN14uS4sSqwF5mL52q62l7xXKkXrEo1Yu0tamPOawoO0erxNMkKQHA63xGPbSmOQM7q9spYcPA4aELOuz0XTF0FqiBZ7mW')"></div>
+</div>
+<!-- Item 5 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A cheerful group of friends relaxing on the deck of a sailing yacht in blue swimwear, holding drinks while looking out at the picturesque coastline." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA8Wj2dhCPgAlZMo6joybMk4zFWH5HwPTsMdYbg6Hk3YvG8hcHvLtvZCnsn5Y6bLrTLezMwRjJ_Fqy3DQSY3u2KMxEgeWPPuWEUMAyAG4MCCR461o00e_yFRoAJGTvD-NfO_Rh19nKv6aEosIo8wicQm4GIF5Nai1icQs9aGSKNXezZmGEj3Dbdj3mFUjFcNAgQPomKj9vySoTAp6hlnN1qY1QE5wbdRPWMOAsWjcINMhtNf7kugaCk')"></div>
+</div>
+<!-- Item 6 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="An overhead drone view of vibrant blue water revealing the anchor of a small white dinghy resting on a sandy seabed near the rocky shore." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDmRgRXta9MLxc5b0QvGD5eSCHMVmhsMjMz4zBWyAsTdNXVKdYAE9rJwGlXX1GUefB4cLGAflBevcc6BvWQO5T3S6hHY1lF0YEsJ91631TV8NQQgkxJemCLT428k6dUOrRtJdzMORgm3RfiaB_IlGXRd32oq1WIH3OEW6LXXmOpUCpMuqBQGriIyyBOvYijOlX4kOUkbqdwSz16Hi24wz0y3I2WE3hUa1DVeJDXhgmPYcMh2AWpVV3Q')"></div>
+</div>
+</div>
+<!-- Date Group: June 2024 -->
+<div class="mt-space-lg mb-space-xs">
+<h3 class="font-title-sm text-on-surface font-medium">June 2024 • Capri, Italy</h3>
+</div>
+<!-- Second Photo Grid -->
+<div class="grid grid-cols-3 gap-1 rounded-xl overflow-hidden">
+<!-- Item 7 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="The famous Faraglioni rock formation in Capri with classic tourist wooden rowboats passing through the natural stone archway under bright daylight." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXxJezsgQv-FxzAvtxwjyhxmuRXAfgVCoi_PbXT6Z8gNNwvEEUHwWCoUEHkWlrpUm2T1H52M1-mGiTghw5P3ZjS8EdJa2e2WG9WOhYxzoXiMcMmScPLCHUNwwrnJSM4fsxNw8CcA5isKJ_1P4B1Jy_Lufi4TpOs-xMvka5ono0H8OINpmEflM2r6796wgiXjOkA0AOdesVs7pn7WHjV9tEhf9AEvUuYFZrvkPoWf5mbwEWCk9683dT')"></div>
+</div>
+<!-- Item 8 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A vintage Italian gozzo boat painted in blue and white, gently bobbing on crystal clear emerald waters inside a sunlit sea cave." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBOmxIedGG4g-8JRQVrpuj0pBADxAhiZBOceC7tvk86Lpw2f_GdbP1VyVN4vww9HblTEPLGj2widYhVmafUgY7sHTyD6wPlatNGsQ9Wmvf9WVSdcvkdUIa36M0o_qvtkhVpxB3JDF1v5l6w35vTOk1641gRnvksXf3ZE1HrrdZrQzc3-A3mzAmz3E2g92RaeBrkABZ0M-dq5TvkANi3PvXirJzHylPNniXmUXKyeWdTfIZvjJFYRUxN')"></div>
+</div>
+<!-- Item 9 -->
+<div class="relative aspect-square group cursor-pointer overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-300" data-alt="A sunny harbor filled with docked fishing boats and modern speedboats tied up neatly along the stone pier of a Mediterranean village." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC9BaZTP8Ws1mzGyksnWECF7d9Vspu-mPlIck1xsMos1KF-D0WcAwkBbYAfUccHckhTCmd3P-lmziHw0swZTGaUjzgzkcQiRi2mMtDE-3qaYDyH_KWUroCp4JC_ys-fC24bSYlVC2vzsMydsZVHwSWbEUQIewcZoXYTZq68n9Ib-_I9ELV0URi8fG27Ps6P4id4_aolJsts8Zp4lKD_uVJOLCFyqXTNsa0bJjrbhCg0B2BnASQ8rW_G')"></div>
+</div>
+</div>
+<!-- Bottom Spacer to clear nav -->
+<div class="h-12"></div>
+</div></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary bg-primary-container/10 font-bold"><div class="flex justify-around items-center h-20 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 rounded-full transition-all text-primary bg-primary-container/10 font-bold" data-path="photos" href="#"><span class="material-symbols-outlined">photo</span><span class="text-label-sm">Photos</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="memories" href="#"><span class="material-symbols-outlined">auto_awesome</span><span class="text-label-sm">Memories</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="search-ask-photos" href="#"><span class="material-symbols-outlined">search</span><span class="text-label-sm">Search</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="sharing" href="#"><span class="material-symbols-outlined">group</span><span class="text-label-sm">Sharing</span></a><a class="flex flex-col items-center justify-center gap-space-xs w-16 h-16 text-on-surface-variant hover:text-on-surface rounded-full transition-all" data-path="library" href="#"><span class="material-symbols-outlined">photo_album</span><span class="text-label-sm">Library</span></a></div></nav></body></html>
