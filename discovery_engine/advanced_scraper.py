@@ -65,14 +65,12 @@ def main():
     
     output_json = 'massive_retrieval_corpus.json'
     with open(output_json, 'w', encoding='utf-8') as f:
-        # Handle datetime serialization
-        for r in search_reviews:
-            if 'at' in r and r['at']:
-                r['at'] = str(r['at'])
-        json.dump(search_reviews, f, indent=2, ensure_ascii=False)
+        # default=str handles every datetime field (at, repliedAt, ...),
+        # not just 'at' -- google_play_scraper returns several.
+        json.dump(search_reviews, f, indent=2, ensure_ascii=False, default=str)
         
     print(f"\nCorpus saved to {output_json}. Ready for LLM structured extraction.")
-    print("\nNext step: Run `llm_analyzer.py` (requires API key) to map this corpus to the 10 Opportunity Areas.")
+    print("\nNext step: Run `llm_analyzer.py` (uses local Ollama, no API key needed) to map this corpus to the 10 Opportunity Areas.")
 
 if __name__ == '__main__':
     main()

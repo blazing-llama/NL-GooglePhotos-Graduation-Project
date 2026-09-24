@@ -8,3 +8,4 @@ mvp/backend/photos/
 mvp/backend/server.log
 mvp/backend/embeddings_cache.npz
 mvp/backend/tags_cache.json
+discovery_engine/analyzer.log
